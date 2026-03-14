@@ -1,6 +1,35 @@
+"use client";
+
 import { contactInfo } from "@/data/contact";
+import { useState, FormEvent } from "react";
 
 export default function Contact() {
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("loading");
+
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: data,
+      });
+
+      if (res.ok) {
+        setStatus("success");
+        form.reset();
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  }
+
   return (
     <main className="max-w-7xl mx-auto px-6 lg:px-8 mt-32 min-h-screen">
       <section className="py-12 pb-24 space-y-16" id="contact">
@@ -76,23 +105,41 @@ export default function Contact() {
           </div>
 
           <div className="relative z-10 w-full">
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Web3Forms access key — replace with your own key in .env.local */}
+              <input type="hidden" name="access_key" value={process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? ""} />
+              {/* Customize the subject line of the email you receive */}
+              <input type="hidden" name="subject" value="New message from your portfolio" />
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                 <div className="space-y-2 w-full">
                   <label className="text-lg font-bold px-1">Name</label>
-                  <input className="w-full bg-white/50 dark:bg-slate-800/50 border-0 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none" placeholder="John Doe" type="text" />
+                  <input name="name" required className="w-full bg-white/50 dark:bg-slate-800/50 border-0 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none" placeholder="John Doe" type="text" />
                 </div>
                 <div className="space-y-2 w-full">
                   <label className="text-lg font-bold px-1">Email</label>
-                  <input className="w-full bg-white/50 dark:bg-slate-800/50 border-0 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none" placeholder="john@example.com" type="email" />
+                  <input name="email" required className="w-full bg-white/50 dark:bg-slate-800/50 border-0 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none" placeholder="john@example.com" type="email" />
                 </div>
               </div>
               <div className="space-y-2 w-full">
                 <label className="text-lg font-bold px-1">Message</label>
-                <textarea className="w-full bg-white/50 dark:bg-slate-800/50 border-0 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none overflow-hidden" placeholder="How can I help you?" rows={4}></textarea>
+                <textarea name="message" required className="w-full bg-white/50 dark:bg-slate-800/50 border-0 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none overflow-hidden" placeholder="How can I help you?" rows={4}></textarea>
               </div>
-              <button className="w-full bg-primary text-white font-black py-4 rounded-2xl hover:bg-primary-hover dark:bg-dark-primary dark:hover:bg-dark-primary-hover transition-all shadow-xl shadow-primary/20 text-xl">
-                Send Message
+
+              {/* Status messages */}
+              {status === "success" && (
+                <p className="text-center text-green-500 font-semibold">✅ Message sent! I'll get back to you soon.</p>
+              )}
+              {status === "error" && (
+                <p className="text-center text-red-500 font-semibold">❌ Something went wrong. Please try again.</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={status === "loading"}
+                className="w-full bg-primary text-white font-black py-4 rounded-2xl hover:bg-primary-hover dark:bg-dark-primary dark:hover:bg-dark-primary-hover transition-all shadow-xl shadow-primary/20 text-xl disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {status === "loading" ? "Sending…" : "Send Message"}
               </button>
             </form>
           </div>
