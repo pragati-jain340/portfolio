@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-dark-primary: var(--color-dark-primary);
+  --color-dark-primary-hover: var(--color-dark-primary-hover);
+
+  --color-background-light: var(--color-background-light);
+  --color-background-dark: var(--color-background-dark);
+
+  --color-text-light-primary: var(--color-text-light-primary);
+  --color-text-light-secondary: var(--color-text-light-secondary);
+  --color-text-dark-primary: var(--color-text-dark-primary);
+  --color-text-dark-secondary: var(--color-text-dark-secondary);
+
+  --font-display: "Inter", "sans-serif";
+}
+
+@layer base {
+  :root {
+    --color-primary: #0D9488;
+    --color-primary-hover: #0F766E;
+    --color-dark-primary: #14B8A6;
+    --color-dark-primary-hover: #0D9488;
+
+    --color-background-light: #F5F7FA;
+    --color-background-dark: #111827;
+
+    --color-text-light-primary: #1F2937;
+    --color-text-light-secondary: #6B7280;
+    --color-text-dark-primary: #E5E7EB;
+    --color-text-dark-secondary: #9CA3AF;
+  }
+
+  html.dark {
+    --color-background-light: #111827;
+    /* Dark background instead of light */
+    --color-text-light-primary: #E5E7EB;
+    /* Light text instead of dark */
+    --color-text-light-secondary: #9CA3AF;
+  }
+
+  html,
+  body {
+    @apply bg-background-light text-text-light-primary transition-colors duration-300 relative min-h-screen;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20;
+  }
+
+  .dark .glass {
+    @apply bg-slate-900/70 border-slate-800/50;
+  }
+
+  .glass-card {
+    @apply bg-white border border-slate-100 backdrop-blur-sm shadow-xl shadow-slate-200/50;
+  }
+
+  .dark .glass-card {
+    @apply bg-slate-800/50 border-slate-800 shadow-none;
+  }
+
+  .theme-grid {
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  }
+
+  .dark .theme-grid {
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  }
+
+  .circle-btn {
+    @apply size-[80px] md:size-[90px] rounded-full bg-white/70 backdrop-blur-md border border-white/20 flex flex-col items-center justify-center gap-1 transition-all text-text-light-secondary;
+  }
+
+  .circle-btn:hover {
+    @apply bg-primary text-white -translate-y-1 shadow-lg shadow-primary/20 border-primary/50;
+  }
+
+  .dark .circle-btn {
+    @apply bg-slate-900/70 border-slate-800/50 text-text-dark-secondary;
+  }
+
+  .dark .circle-btn:hover {
+    @apply bg-primary text-white border-primary/50;
+  }
+}
