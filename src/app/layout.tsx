@@ -12,8 +12,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio | Pragati Jain — AI Engineer",
+  title: "Pragati Jain — AI Engineer",
   description: "AI Engineer, Computer Vision Researcher, and Multimodal Systems builder.",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
