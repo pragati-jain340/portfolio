@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Pragati Jain — AI Engineer",
+  title: "Pragati Jain | AI Engineer | Machine Learning & Deep Learning",
   description: "AI Engineer, Computer Vision Researcher, and Multimodal Systems builder.",
   icons: {
     icon: "/logo.png",
