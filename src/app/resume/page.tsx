@@ -40,7 +40,7 @@ export default function Resume() {
             <div className="space-y-12 border-l-2 border-primary/20 ml-4 pl-8 relative">
               {experiences.map((exp, idx) => (
                 <div key={exp.id} className="relative">
-                  <div className={`absolute -left-[42px] top-1 size-5 rounded-full border-4 border-white dark:border-slate-800 ${idx === 0 || idx === 1 ? 'bg-primary' : 'bg-primary/40'}`}></div>
+                  <div className={`absolute -left-[42px] top-1 size-5 rounded-full border-4 border-white dark:border-slate-800 ${exp.period.toLowerCase().includes('present') ? 'bg-primary' : 'bg-primary/40'}`}></div>
                   <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-2 gap-2">
                     <h4 className="text-xl font-bold">{exp.role}</h4>
                     <span className="bg-primary/10 text-primary text-sm font-bold px-4 py-1.5 rounded-full uppercase self-start md:self-auto">

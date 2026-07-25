@@ -26,7 +26,7 @@ export const researchData: ResearchItem[] = [
     id: "iit-bhu-intern",
     title: "Research Intern",
     institution: "IIT BHU",
-    period: "Dec 2024 – Present (Ongoing)",
+    period: "Dec 2024 – Apr 2026",
     description: [
       "Researching animal 3D reconstruction using SMAL + SDFit, diffusion models and ControlNet conditioning. Working on pose alignment, mesh fitting stability and reconstruction quality.",
       "Worked on satellite-based landslide detection using multi-spectral imagery with YOLO, UNet and Transformer segmentation models."

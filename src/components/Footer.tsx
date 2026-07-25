@@ -10,7 +10,6 @@ export default function Footer() {
           <span className="text-xl font-bold tracking-tight">Pragati Jain</span>
         </Link>
         <div className="flex gap-12 text-sm text-text-light-secondary dark:text-text-dark-secondary font-medium">
-          <span>+91 9286442944</span>
           <span>pragatijain841@gmail.com</span>
         </div>
         <div className="flex gap-4">

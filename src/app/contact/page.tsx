@@ -54,16 +54,6 @@ export default function Contact() {
 
             <div className="space-y-6">
               <div className="flex items-center gap-6">
-                <div className="size-16 rounded-full glass flex items-center justify-center text-primary">
-                  <span className="material-symbols-outlined text-3xl">call</span>
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-widest">Call Me</p>
-                  <p className="text-lg font-bold">{contactInfo.phone}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-6">
                 <div className="size-16 rounded-full glass flex items-center justify-center text-primary dark:text-dark-primary">
                   <span className="material-symbols-outlined text-3xl">mail</span>
                 </div>

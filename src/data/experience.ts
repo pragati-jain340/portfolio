@@ -8,10 +8,18 @@ export interface Experience {
 
 export const experiences: Experience[] = [
   {
+    id: "ai-engineer-intern-bmw-group",
+    role: "AI Engineer Intern",
+    company: "BMW Group (Munich)",
+    period: "June 2026 – Present",
+    description: [
+    ]
+  },
+  {
     id: "research-intern-iit-bhu",
     role: "Research Intern",
     company: "IIT BHU",
-    period: "Dec 2024 – Present",
+    period: "Dec 2024 – Apr 2026",
     description: [
       "Researching animal 3D reconstruction using SMAL + SDFit, diffusion models and ControlNet conditioning. Working on pose alignment, mesh fitting stability and reconstruction quality.",
       "Worked on satellite-based landslide detection using multi-spectral imagery with YOLO, UNet and Transformer segmentation models."
@@ -21,7 +29,7 @@ export const experiences: Experience[] = [
     id: "ai-intern-savgen",
     role: "AI Intern",
     company: "Savgen",
-    period: "Nov 2025 – Present",
+    period: "Nov 2025 – Apr 2026",
     description: [
       "Developed a RAG-based pipeline where an AI meeting bot joins meetings, generates transcripts, and converts transcripts and BRDs into structured user stories, implementation code, and system design artifacts.",
       "Implemented asynchronous background processing using Redis queues and APScheduler with observability for monitoring pipeline execution.",
