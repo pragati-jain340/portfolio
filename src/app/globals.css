@@ -4,6 +4,95 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+.intro-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #fbffff;
+  color: #102431;
+}
+
+.intro-loader[data-phase="waiting"] {
+  /* Escape hatch if scripts fail before hydration. */
+  animation: intro-fallback 0s 10s forwards;
+}
+
+.intro-loader[data-phase="exiting"] {
+  animation: intro-exit 1s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.intro-loader__artwork {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100vw, calc(100dvh * 16 / 9));
+  aspect-ratio: 16 / 9;
+  transform: translate(-50%, -50%);
+}
+
+.intro-loader__greetings {
+  position: absolute;
+  left: 45.8%;
+  top: 50.4%;
+  transform: translateY(-50%);
+  font-family: var(--font-inter), Arial, sans-serif;
+  font-size: clamp(2.25rem, 6.25vw, 7.5rem);
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.intro-loader__skip {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #10243140;
+  background: #fbffffcc;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.intro-loader__skip:hover,
+.intro-loader__skip:focus-visible {
+  background: #0d948815;
+  outline: 2px solid #0d9488;
+  outline-offset: 4px;
+}
+
+@keyframes intro-fallback {
+  to { visibility: hidden; }
+}
+
+@keyframes intro-exit {
+  from {
+    transform: translateY(0);
+    border-radius: 0;
+    opacity: 1;
+    visibility: visible;
+  }
+  to {
+    transform: translateY(-100%);
+    border-radius: 100%;
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-loader[data-phase="exiting"] {
+    animation: intro-reduced-exit 1s ease-out forwards;
+  }
+}
+
+@keyframes intro-reduced-exit {
+  to { opacity: 0; visibility: hidden; }
+}
+
 @theme {
   --color-primary: var(--color-primary);
   --color-primary-hover: var(--color-primary-hover);
@@ -22,6 +111,20 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  section[id] {
+    scroll-margin-top: 110px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.scroll-smooth {
+      scroll-behavior: auto;
+    }
+  }
+
   :root {
     --color-primary: #0D9488;
     --color-primary-hover: #0F766E;
@@ -52,6 +155,10 @@
 }
 
 @layer utilities {
+  .portfolio-section {
+    @apply border-t border-slate-200/70 py-16 md:py-24 dark:border-slate-800;
+  }
+
   .glass {
     @apply bg-white/70 backdrop-blur-md border border-white/20;
   }

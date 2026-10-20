@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 py-12 px-6 relative z-10 block">
       <div className="max-w-[90rem] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/#home" className="flex items-center gap-2">
           <Image src="/logo.png" alt="PJ Logo" width={36} height={36} className="rounded-full" />
           <span className="text-xl font-bold tracking-tight">Pragati Jain</span>
         </Link>

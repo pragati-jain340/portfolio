@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackgroundAnim from "@/components/BackgroundAnim";
+import IntroLoader from "@/components/IntroLoader";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -38,6 +39,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} antialiased theme-grid`}>
+        <IntroLoader />
         <BackgroundAnim />
         <Navbar />
         {children}
