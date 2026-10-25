@@ -1,0 +1,19 @@
+.heading { position: relative; }
+.line { display: block; position: relative; }
+.ghost { visibility: hidden; }
+.typed { position: absolute; inset: 0; }
+.cursor {
+  display: inline-block;
+  width: 3px;
+  height: 0.82em;
+  margin-left: 5px;
+  border-radius: 2px;
+  background: currentColor;
+  vertical-align: -0.03em;
+  animation: typing-cursor 700ms step-end infinite;
+}
+.heading[data-complete="true"] .cursor { animation-iteration-count: 3; animation-fill-mode: forwards; }
+@keyframes typing-cursor {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}

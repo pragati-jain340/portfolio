@@ -10,7 +10,7 @@ export const skillCategories: SkillCategory[] = [
     id: "core-ai-ml",
     title: "Core AI / ML",
     icon: "psychology",
-    skills: ["Python", "Deep Learning", "Transformers", "Machine Learning", "RAG", "AI Agent Evaluation", "Computer Vision"]
+    skills: ["Python", "Deep Learning", "Transformers", "Machine Learning", "RAG", "AI Agent Evaluation", "Computer Vision", "Agentic AI"]
   },
   {
     id: "frameworks-libraries",

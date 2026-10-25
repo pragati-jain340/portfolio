@@ -1,11 +1,24 @@
 "use client";
 
 import { contactInfo } from "@/data/contact";
-import { useState, FormEvent } from "react";
+import { useEffect, useRef, useState, FormEvent } from "react";
 import styles from "./Contact.module.css";
 
 export default function Contact() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const contactCard = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const card = contactCard.current;
+    if (!card || !("IntersectionObserver" in window)) return;
+    card.dataset.enhanced = "true";
+    const observer = new IntersectionObserver(([entry]) => {
+      // Reset only after leaving the viewport, so every return replays the entrance.
+      card.dataset.revealed = String(entry.isIntersecting);
+    }, { threshold: 0, rootMargin: "0px 0px -8% 0px" });
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, []);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -40,11 +53,11 @@ export default function Contact() {
             Open to research collaborations, AI projects, and new opportunities.
           </p>
         </div>
-        <div className="glass-card rounded-[3rem] p-12 lg:p-20 grid grid-cols-1 lg:grid-cols-2 gap-16 overflow-hidden relative">
+        <div ref={contactCard} className={`${styles.revealRoot} glass-card rounded-[3rem] p-12 lg:p-20 grid grid-cols-1 lg:grid-cols-2 gap-16 overflow-hidden relative`}>
           <div className="absolute -bottom-20 -left-20 size-80 bg-primary/20 blur-3xl rounded-full"></div>
           
           <div className="space-y-8 relative z-10">
-            <div className="space-y-4">
+            <div className={`${styles.introPiece} space-y-4`} data-contact-entrance="left">
               <h2 className="text-5xl font-black">
                 Let&apos;s build<br />something <span className="text-primary">intelligent</span>.
               </h2>
@@ -53,7 +66,7 @@ export default function Contact() {
               </p>
             </div>
 
-            <div className="space-y-6">
+            <div className={`${styles.detailsPiece} space-y-6`} data-contact-entrance="left">
               <div className="flex items-center gap-6">
                 <div className="size-16 rounded-full glass flex items-center justify-center text-primary dark:text-dark-primary">
                   <span className="material-symbols-outlined text-3xl">mail</span>
@@ -75,7 +88,7 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="flex gap-4 mt-4">
+            <div className={`${styles.socialPiece} flex gap-4 mt-4`} data-contact-entrance="left">
               <a 
                 className="size-12 rounded-full glass flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-md shadow-primary/10" 
                 href={contactInfo.github} 
@@ -102,7 +115,7 @@ export default function Contact() {
               {/* Customize the subject line of the email you receive */}
               <input type="hidden" name="subject" value="New message from your portfolio" />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+              <div className={`${styles.fieldsPiece} grid grid-cols-1 md:grid-cols-2 gap-6 w-full`} data-contact-entrance="right">
                 <div className="space-y-2 w-full">
                   <label htmlFor="contact-name" className="text-lg font-bold px-1">Name</label>
                   <input id="contact-name" name="name" autoComplete="name" required className={styles.field} placeholder="John Doe" type="text" />
@@ -112,7 +125,7 @@ export default function Contact() {
                   <input id="contact-email" name="email" autoComplete="email" required className={styles.field} placeholder="john@example.com" type="email" />
                 </div>
               </div>
-              <div className="space-y-2 w-full">
+              <div className={`${styles.messagePiece} space-y-2 w-full`} data-contact-entrance="right">
                 <label htmlFor="contact-message" className="text-lg font-bold px-1">Message</label>
                 <textarea id="contact-message" name="message" required className={styles.field} placeholder="How can I help you?" rows={4}></textarea>
               </div>
@@ -127,8 +140,9 @@ export default function Contact() {
 
               <button
                 type="submit"
+                data-contact-entrance="right"
                 disabled={status === "loading"}
-                className="w-full bg-primary text-white font-black py-4 rounded-2xl hover:bg-primary-hover dark:bg-dark-primary dark:hover:bg-dark-primary-hover transition-all shadow-xl shadow-primary/20 text-xl disabled:opacity-60 disabled:cursor-not-allowed"
+                className={`${styles.sendPiece} w-full bg-primary text-white font-black py-4 rounded-2xl hover:bg-primary-hover dark:bg-dark-primary dark:hover:bg-dark-primary-hover transition-all shadow-xl shadow-primary/20 text-xl disabled:opacity-60 disabled:cursor-not-allowed`}
               >
                 {status === "loading" ? "Sending…" : "Send Message"}
               </button>

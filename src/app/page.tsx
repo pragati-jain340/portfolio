@@ -4,6 +4,7 @@ import Achievements from "@/components/sections/Achievements";
 import Projects from "@/components/sections/Projects";
 import Contact from "@/components/sections/Contact";
 import { profile } from "@/data/profile";
+import TypewriterHeading from "@/components/TypewriterHeading";
 
 // Helper function to render bold tags from the markdown-like bio strings
 function renderBioLine(text: string) {
@@ -53,10 +54,7 @@ export default function Home() {
             <span className="inline-block px-5 py-2 rounded-full bg-primary/10 text-primary font-bold text-sm tracking-widest uppercase mb-2">
               {profile.titles.join(" | ")}
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.05] tracking-tighter">
-              Hello, I'm<br />
-              <span className="text-primary">{profile.name}</span>
-            </h1>
+            <TypewriterHeading name={profile.name} />
             <div className="flex flex-col gap-3 text-base md:text-lg text-text-light-secondary dark:text-text-dark-secondary max-w-xl leading-relaxed font-normal">
               {profile.bio.map((line, idx) => (
                 <p key={idx}>{renderBioLine(line)}</p>

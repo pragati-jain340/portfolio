@@ -1,3 +1,32 @@
+.revealRoot [data-contact-entrance="left"] { --entrance-x: -64px; }
+.revealRoot [data-contact-entrance="right"] { --entrance-x: 64px; }
+.introPiece { --entrance-delay: 0ms; }
+.detailsPiece { --entrance-delay: 100ms; }
+.socialPiece { --entrance-delay: 200ms; }
+.fieldsPiece { --entrance-delay: 80ms; }
+.messagePiece { --entrance-delay: 160ms; }
+.sendPiece { --entrance-delay: 240ms; }
+
+.revealRoot[data-enhanced="true"] [data-contact-entrance] {
+  opacity: 0;
+  transform: translate3d(var(--entrance-x), 0, 0);
+  transition: opacity 650ms ease, transform 950ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.revealRoot[data-revealed="true"] [data-contact-entrance],
+.revealRoot:focus-within [data-contact-entrance] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition-delay: var(--entrance-delay, 0ms);
+}
+
+.revealRoot:focus-within [data-contact-entrance] { transition-delay: 0ms; }
+
+@media (max-width: 767px) {
+  .revealRoot [data-contact-entrance="left"] { --entrance-x: -32px; }
+  .revealRoot [data-contact-entrance="right"] { --entrance-x: 32px; }
+}
+
 .form {
   --field-background: #f8fafc;
   --field-text: #1f2937;
