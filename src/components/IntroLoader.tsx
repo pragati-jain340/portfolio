@@ -1,60 +1,99 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { INTRO_SENTENCE, introCharacterCount } from "@/lib/intro-playback";
+import styles from "./IntroLoader.module.css";
 
-const greetings = [
-  { text: "Hello", lang: "en" },
-  { text: "नमस्ते", lang: "hi" },
-  { text: "ہیلو", lang: "ur" },
-  { text: "Hola", lang: "es" },
-  { text: "Bonjour", lang: "fr" },
-  { text: "Hallo", lang: "de" },
-  { text: "Ciao", lang: "it" },
-  { text: "Привет", lang: "ru" },
-  { text: "你好", lang: "zh" },
-  { text: "مرحبا", lang: "ar" },
-];
+type PlaybackMode = "loading" | "playing" | "paused" | "ended" | "blocked" | "error";
+const VIDEO = "/robot-intro.mp4";
+const POSTER = "/robot-intro-poster.jpg";
 
 export default function IntroLoader() {
-  const [phase, setPhase] = useState<"waiting" | "greetings" | "exiting" | "done">("waiting");
-  const [wordIndex, setWordIndex] = useState(0);
-  const [backgroundReady, setBackgroundReady] = useState(false);
+  const [phase, setPhase] = useState<"active" | "exiting" | "done">("active");
+  const [mode, setMode] = useState<PlaybackMode>("loading");
+  const [characters, setCharacters] = useState(0);
+  const [hasPlayed, setHasPlayed] = useState(false);
+  const video = useRef<HTMLVideoElement>(null);
+  const modeRef = useRef<PlaybackMode>("loading");
+  const loadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const finished = phase === "done";
 
+  const updateMode = useCallback((next: PlaybackMode) => {
+    modeRef.current = next;
+    if (next !== "loading" && loadTimer.current) {
+      clearTimeout(loadTimer.current);
+      loadTimer.current = null;
+    }
+    setMode(next);
+  }, []);
+
+  const showFallback = useCallback((next: "blocked" | "error") => {
+    updateMode(next);
+    video.current?.pause();
+    setCharacters(INTRO_SENTENCE.length);
+  }, [updateMode]);
+
   useEffect(() => {
-    if (finished || !backgroundReady) return;
-    const timers: number[] = [];
-    let frame = 0;
-    let started = false;
+    if (finished) return;
+    const media = video.current;
+    if (!media) return;
+    let disposed = false;
+    let attempted = false;
     const start = () => {
-      if (started || document.visibilityState !== "visible") return;
-      started = true;
-      frame = window.requestAnimationFrame(() => {
-        setPhase((current) => current === "waiting" ? "greetings" : current);
-        greetings.forEach((_, index) => {
-          if (index > 0) {
-            timers.push(window.setTimeout(() => setWordIndex(index), index * 170));
-          }
-        });
-        const greetingDuration = greetings.length * 170;
-        timers.push(window.setTimeout(() => setPhase("exiting"), greetingDuration));
+      if (disposed || attempted || document.visibilityState !== "visible") return;
+      attempted = true;
+      if (media.ended) {
+        setHasPlayed(true);
+        updateMode("ended");
+        setCharacters(INTRO_SENTENCE.length);
+        setPhase("exiting");
+        return;
+      }
+      updateMode("loading");
+      media.muted = true;
+      media.defaultMuted = true;
+      loadTimer.current = setTimeout(() => {
+        if (!disposed && modeRef.current === "loading") showFallback("error");
+      }, 6000);
+      // Native autoplay can begin before hydration; don't reload or restart it.
+      void media.play().then(() => {
+        if (disposed) return;
+        setHasPlayed(true);
+        updateMode("playing");
+      }).catch(() => {
+        if (!disposed) showFallback("blocked");
       });
     };
-    start();
+    const frame = requestAnimationFrame(start);
     document.addEventListener("visibilitychange", start);
     return () => {
-      window.cancelAnimationFrame(frame);
-      timers.forEach((timer) => window.clearTimeout(timer));
+      disposed = true;
+      cancelAnimationFrame(frame);
+      if (loadTimer.current) clearTimeout(loadTimer.current);
       document.removeEventListener("visibilitychange", start);
+      modeRef.current = "loading";
+      media.pause();
     };
-  }, [finished, backgroundReady]);
+  }, [finished, showFallback, updateMode]);
+
+  useEffect(() => {
+    if (mode !== "playing" || phase !== "active") return;
+    let frame = 0;
+    const synchronize = () => {
+      if (video.current) setCharacters(introCharacterCount(video.current.currentTime));
+      frame = requestAnimationFrame(synchronize);
+    };
+    frame = requestAnimationFrame(synchronize);
+    return () => cancelAnimationFrame(frame);
+  }, [mode, phase]);
 
   useEffect(() => {
     if (finished) return;
     const previousOverflow = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
-    const content = document.querySelectorAll<HTMLElement>("body > main, body > nav, body > footer");
+    const content = Array.from(document.querySelectorAll<HTMLElement>("body > main, body > nav, body > footer"));
+    const previousInert = content.map((element) => element.inert);
     content.forEach((element) => { element.inert = true; });
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setPhase("exiting");
@@ -62,64 +101,95 @@ export default function IntroLoader() {
     window.addEventListener("keydown", onKeyDown);
     return () => {
       document.documentElement.style.overflow = previousOverflow;
-      content.forEach((element) => { element.inert = false; });
+      content.forEach((element, index) => { element.inert = previousInert[index]; });
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [finished]);
 
   useEffect(() => {
     if (phase !== "exiting") return;
-    // Safety net; normally the exit animation itself completes the intro.
-    const timer = window.setTimeout(() => setPhase("done"), 2600);
-    return () => window.clearTimeout(timer);
+    video.current?.pause();
+    // Preserve the curtain's existing animation and safety net.
+    const timer = setTimeout(() => setPhase("done"), 2600);
+    return () => clearTimeout(timer);
   }, [phase]);
 
-  if (phase === "done") return null;
-  const greeting = greetings[wordIndex];
+  if (finished) return null;
+  const showPoster = mode === "error" || mode === "blocked" || (mode === "loading" && !hasPlayed);
+  const complete = characters === INTRO_SENTENCE.length;
+  const emphasisStart = INTRO_SENTENCE.indexOf("look around");
 
   return (
     <>
       <noscript><style>{".intro-loader { display: none !important; }"}</style></noscript>
       <div
-        className="intro-loader"
+        className={`intro-loader ${styles.shell}`}
         data-phase={phase}
-        aria-label="Welcome to Pragati's portfolio"
+        data-playing={mode === "playing"}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="robot-intro-sentence"
         onAnimationEnd={(event) => {
-          if (
-            event.target === event.currentTarget &&
-            event.animationName === "intro-exit-complete"
-          ) setPhase("done");
+          if (phase === "exiting" && event.target === event.currentTarget) setPhase("done");
         }}
       >
-        <div className="intro-loader__sheet">
-          <div className="intro-loader__artwork">
-            <Image
-              src="/intro-background.png"
-              alt=""
-              fill
-              priority
-              sizes="(min-aspect-ratio: 16/9) 100vw, 178vh"
-              onLoad={() => setBackgroundReady(true)}
-              onError={() => setBackgroundReady(true)}
-            />
-            <div className="intro-loader__greetings" aria-hidden="true">
-              <span key={greeting.lang} lang={greeting.lang} dir="auto" className="intro-loader__word">
-                {greeting.text}
-              </span>
+        <div className={`intro-loader__sheet ${styles.sheet}`}>
+          <p className={styles.brand}>PRAGATI JAIN</p>
+          <div className={styles.content}>
+            <div className={styles.stage}>
+              <div className={styles.videoFrame} data-poster={showPoster}>
+                <video
+                  ref={video}
+                  src={VIDEO}
+                  className={styles.video}
+                  poster={POSTER}
+                  width={3840}
+                  height={2160}
+                  muted
+                  autoPlay
+                  playsInline
+                  preload="auto"
+                  disablePictureInPicture
+                  aria-hidden="true"
+                  onPlaying={() => {
+                    setHasPlayed(true);
+                    updateMode("playing");
+                  }}
+                  onPause={() => {
+                    if (modeRef.current === "playing") updateMode("paused");
+                  }}
+                  onTimeUpdate={(event) => {
+                    if (modeRef.current === "playing" || modeRef.current === "paused") {
+                      setCharacters(introCharacterCount(event.currentTarget.currentTime));
+                    }
+                  }}
+                  onEnded={() => {
+                    updateMode("ended");
+                    setCharacters(INTRO_SENTENCE.length);
+                    setPhase("exiting");
+                  }}
+                  onError={() => {
+                    showFallback("error");
+                  }}
+                />
+                <Image src={POSTER} alt="" fill priority sizes="100vw" className={styles.poster} />
+              </div>
+              <h1 id="robot-intro-sentence" className={styles.phrase}>
+                <span className={styles.accessible}>{INTRO_SENTENCE}</span>
+                <span className={styles.ghost} aria-hidden="true">{INTRO_SENTENCE}</span>
+                <span className={styles.typed} aria-hidden="true">
+                  {INTRO_SENTENCE.slice(0, Math.min(characters, emphasisStart))}
+                  <span className={styles.emphasis}>{INTRO_SENTENCE.slice(emphasisStart, Math.max(emphasisStart, characters))}</span>
+                  {characters > 0 && !complete && <span className={styles.cursor} />}
+                </span>
+              </h1>
             </div>
           </div>
-          <div className="intro-loader__signature" aria-hidden="true">
-            <span>PRAGATI JAIN</span>
-            <span>A little hello. A world of possibilities.</span>
+          <div className={styles.footer}>
+            <button type="button" className={`intro-loader__skip ${styles.enter}`} onClick={() => setPhase("exiting")}>
+              {complete ? "Explore portfolio" : "Skip intro"}
+            </button>
           </div>
-          <button
-            type="button"
-            className="intro-loader__skip"
-            onClick={() => setPhase("exiting")}
-          >
-            Skip intro
-          </button>
-          <div className="intro-loader__progress" aria-hidden="true" />
         </div>
       </div>
     </>

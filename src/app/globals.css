@@ -38,11 +38,6 @@
   background: #fbffff;
 }
 
-.intro-loader[data-phase="waiting"] {
-  /* Escape hatch if scripts fail before hydration. */
-  animation: intro-fallback 0s 10s forwards;
-}
-
 .intro-loader[data-phase="exiting"] {
   animation: intro-exit-complete 1.5s linear both;
 }
@@ -61,12 +56,6 @@
   animation-delay: 140ms;
 }
 
-.intro-loader[data-phase="exiting"] .intro-loader__greetings {
-  opacity: 0;
-  translate: 0 -28px;
-  transition: opacity 250ms ease, translate 500ms ease;
-}
-
 .intro-loader[data-phase="exiting"] ~ main #home > div {
   animation: intro-home-reveal 1000ms cubic-bezier(0.22, 1, 0.36, 1) 250ms both;
 }
@@ -77,27 +66,6 @@
 
 .intro-loader[data-phase="exiting"] ~ nav {
   animation: intro-nav-reveal 900ms cubic-bezier(0.22, 1, 0.36, 1) 380ms both;
-}
-
-.intro-loader__artwork {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: max(100vw, calc(100dvh * 16 / 9));
-  aspect-ratio: 16 / 9;
-  transform: translate(-50%, -50%);
-}
-
-.intro-loader__greetings {
-  position: absolute;
-  left: 45.8%;
-  top: 50.4%;
-  transform: translateY(-50%);
-  font-family: var(--font-inter), Arial, sans-serif;
-  font-size: clamp(2.25rem, 6.25vw, 7.5rem);
-  font-weight: 400;
-  line-height: 1.2;
-  white-space: nowrap;
 }
 
 .intro-loader__skip {
@@ -112,57 +80,11 @@
   cursor: pointer;
 }
 
-.intro-loader__word {
-  display: inline-block;
-  animation: intro-word-in 170ms ease-out both;
-}
-
-.intro-loader__signature {
-  position: absolute;
-  left: clamp(1.5rem, 4vw, 4rem);
-  bottom: 2rem;
-  display: grid;
-  gap: 0.5rem;
-  color: #4b7775;
-  font-size: 0.65rem;
-  letter-spacing: 0.24em;
-}
-
-.intro-loader__signature span + span {
-  font-size: 0.75rem;
-  letter-spacing: 0.02em;
-}
-
-.intro-loader__progress {
-  position: absolute;
-  inset: auto 0 0;
-  height: 2px;
-  background: #0d9488;
-  transform: scaleX(0);
-  transform-origin: left;
-}
-
-.intro-loader[data-phase="greetings"] .intro-loader__progress {
-  animation: intro-progress 1.7s linear forwards;
-}
-
-.intro-loader[data-phase="exiting"] .intro-loader__progress {
-  transform: scaleX(1);
-}
-
-@media (max-width: 480px) {
-  .intro-loader__signature span + span { display: none; }
-}
-
 .intro-loader__skip:hover,
 .intro-loader__skip:focus-visible {
   background: #0d948815;
   outline: 2px solid #0d9488;
   outline-offset: 4px;
-}
-
-@keyframes intro-fallback {
-  to { visibility: hidden; }
 }
 
 @keyframes intro-curtain-lift {
@@ -174,15 +96,6 @@
 @keyframes intro-exit-complete {
   from { pointer-events: auto; }
   to { pointer-events: none; }
-}
-
-@keyframes intro-word-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes intro-progress {
-  to { transform: scaleX(1); }
 }
 
 @keyframes intro-home-reveal {
