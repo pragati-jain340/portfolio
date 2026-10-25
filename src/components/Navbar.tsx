@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ThemeToggle from "./ThemeToggle";
+import styles from "./Navigation.module.css";
 
 const links = [
   { name: "Home", href: "#home" },
@@ -49,7 +50,7 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4">
       <div className="glass w-full max-w-6xl rounded-full px-5 md:px-8 py-3 flex items-center justify-between shadow-lg">
-        <Link href="/#home" className="flex items-center gap-2">
+        <Link href="/#home" className={`${styles.brand} flex items-center gap-2`}>
           <Image src="/logo.png" alt="PJ Logo" width={36} height={36} className="rounded-full" />
           <span className="text-xl font-bold tracking-tight">Pragati Jain</span>
         </Link>
@@ -78,7 +79,7 @@ export default function Navbar() {
               key={link.name}
               href={`/${link.href}`}
               aria-current={activeSection === link.href ? "location" : undefined}
-              className={`transition-colors ${
+              className={`${styles.link} ${
                 activeSection === link.href
                   ? "text-primary font-bold"
                   : "hover:text-primary"
@@ -104,7 +105,7 @@ export default function Navbar() {
               href={`/${link.href}`}
               aria-current={activeSection === link.href ? "location" : undefined}
               onClick={() => setIsOpen(false)}
-              className={`transition-colors w-full text-center text-lg ${
+              className={`${styles.link} w-full text-center text-lg ${
                 activeSection === link.href
                   ? "text-primary font-bold"
                   : "hover:text-primary"

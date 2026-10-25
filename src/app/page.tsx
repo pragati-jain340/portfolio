@@ -3,7 +3,6 @@ import Research from "@/components/sections/Research";
 import Achievements from "@/components/sections/Achievements";
 import Projects from "@/components/sections/Projects";
 import Contact from "@/components/sections/Contact";
-import Link from "next/link";
 import { profile } from "@/data/profile";
 
 // Helper function to render bold tags from the markdown-like bio strings
@@ -63,28 +62,6 @@ export default function Home() {
                 <p key={idx}>{renderBioLine(line)}</p>
               ))}
             </div>
-          </div>
-          <div className="flex flex-wrap gap-5 pt-4">
-            <Link className="circle-btn group" href="#experience">
-              <span className="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform">description</span>
-              <span className="text-sm font-bold uppercase tracking-tighter">Experience</span>
-            </Link>
-            <Link className="circle-btn group" href="#research">
-              <span className="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform">science</span>
-              <span className="text-sm font-bold uppercase tracking-tighter">Research</span>
-            </Link>
-            <Link className="circle-btn group" href="#achievements">
-              <span className="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform">emoji_events</span>
-              <span className="text-sm font-bold uppercase tracking-tighter">Awards</span>
-            </Link>
-            <Link className="circle-btn group" href="#projects">
-              <span className="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform">grid_view</span>
-              <span className="text-sm font-bold uppercase tracking-tighter">Projects</span>
-            </Link>
-            <Link className="circle-btn group" href="#contact">
-              <span className="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform">alternate_email</span>
-              <span className="text-sm font-bold uppercase tracking-tighter">Contact</span>
-            </Link>
           </div>
         </div>
       </section>

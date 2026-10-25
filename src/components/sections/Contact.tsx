@@ -2,6 +2,7 @@
 
 import { contactInfo } from "@/data/contact";
 import { useState, FormEvent } from "react";
+import styles from "./Contact.module.css";
 
 export default function Contact() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -45,10 +46,10 @@ export default function Contact() {
           <div className="space-y-8 relative z-10">
             <div className="space-y-4">
               <h2 className="text-5xl font-black">
-                Let's build<br />something <span className="text-primary">intelligent</span>.
+                Let&apos;s build<br />something <span className="text-primary">intelligent</span>.
               </h2>
               <p className="text-text-light-secondary dark:text-text-dark-secondary text-base">
-                I'm always open to discussing research collaborations, AI projects, or opportunities in computer vision and machine learning.
+                I&apos;m always open to discussing research collaborations, AI projects, or opportunities in computer vision and machine learning.
               </p>
             </div>
 
@@ -95,7 +96,7 @@ export default function Contact() {
           </div>
 
           <div className="relative z-10 w-full">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className={`${styles.form} space-y-6`}>
               {/* Web3Forms access key — replace with your own key in .env.local */}
               <input type="hidden" name="access_key" value={process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? ""} />
               {/* Customize the subject line of the email you receive */}
@@ -103,25 +104,25 @@ export default function Contact() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                 <div className="space-y-2 w-full">
-                  <label className="text-lg font-bold px-1">Name</label>
-                  <input name="name" required className="w-full bg-white/50 dark:bg-slate-800/50 border-0 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none" placeholder="John Doe" type="text" />
+                  <label htmlFor="contact-name" className="text-lg font-bold px-1">Name</label>
+                  <input id="contact-name" name="name" autoComplete="name" required className={styles.field} placeholder="John Doe" type="text" />
                 </div>
                 <div className="space-y-2 w-full">
-                  <label className="text-lg font-bold px-1">Email</label>
-                  <input name="email" required className="w-full bg-white/50 dark:bg-slate-800/50 border-0 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none" placeholder="john@example.com" type="email" />
+                  <label htmlFor="contact-email" className="text-lg font-bold px-1">Email</label>
+                  <input id="contact-email" name="email" autoComplete="email" required className={styles.field} placeholder="john@example.com" type="email" />
                 </div>
               </div>
               <div className="space-y-2 w-full">
-                <label className="text-lg font-bold px-1">Message</label>
-                <textarea name="message" required className="w-full bg-white/50 dark:bg-slate-800/50 border-0 rounded-2xl p-4 focus:ring-2 focus:ring-primary outline-none overflow-hidden" placeholder="How can I help you?" rows={4}></textarea>
+                <label htmlFor="contact-message" className="text-lg font-bold px-1">Message</label>
+                <textarea id="contact-message" name="message" required className={styles.field} placeholder="How can I help you?" rows={4}></textarea>
               </div>
 
               {/* Status messages */}
               {status === "success" && (
-                <p className="text-center text-green-500 font-semibold">✅ Message sent! I'll get back to you soon.</p>
+                <p className={`${styles.success} text-center font-semibold`}>✅ Message sent! I&apos;ll get back to you soon.</p>
               )}
               {status === "error" && (
-                <p className="text-center text-red-500 font-semibold">❌ Something went wrong. Please try again.</p>
+                <p className={`${styles.error} text-center font-semibold`}>❌ Something went wrong. Please try again.</p>
               )}
 
               <button

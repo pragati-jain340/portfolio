@@ -1,23 +1,8 @@
 import { experiences } from "@/data/experience";
 import { education } from "@/data/education";
 import { skillCategories } from "@/data/skills";
-import { projects } from "@/data/projects";
-
-// Helper for rendering bold tags just like on the home page
-function renderTextWithBold(text: string) {
-  if (!text) return null;
-  const parts = text.split(/(\*\*.*?\*\*)/g);
-  return (
-    <>
-      {parts.map((part, i) => {
-        if (part.startsWith("**") && part.endsWith("**")) {
-          return <strong key={i}>{part.slice(2, -2)}</strong>;
-        }
-        return <span key={i}>{part}</span>;
-      })}
-    </>
-  );
-}
+import ExperienceTimeline from "./ExperienceTimeline";
+import EducationCards from "./EducationCards";
 
 export default function Resume() {
   return (
@@ -37,30 +22,7 @@ export default function Resume() {
               <span className="material-symbols-outlined text-primary text-4xl">work</span>
               <h3 className="text-3xl font-bold">Work Experience</h3>
             </div>
-            <div className="space-y-12 border-l-2 border-primary/20 ml-4 pl-8 relative">
-              {experiences.map((exp, idx) => (
-                <div key={exp.id} className="relative">
-                  <div className={`absolute -left-[42px] top-1 size-5 rounded-full border-4 border-white dark:border-slate-800 ${exp.period.toLowerCase().includes('present') ? 'bg-primary' : 'bg-primary/40'}`}></div>
-                  <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-2 gap-2">
-                    <h4 className="text-xl font-bold">{exp.role}</h4>
-                    <span className="bg-primary/10 text-primary text-sm font-bold px-4 py-1.5 rounded-full uppercase self-start md:self-auto">
-                      {exp.period}
-                    </span>
-                  </div>
-                  <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary font-medium mb-4 italic">
-                    {exp.company}
-                  </p>
-                  <div className="text-base text-text-light-secondary dark:text-text-dark-secondary space-y-3">
-                    {exp.description.map((desc, i) => (
-                      <p key={i} className="leading-relaxed">
-                        {exp.description.length > 1 && "• "}
-                        {renderTextWithBold(desc)}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ExperienceTimeline experiences={experiences} />
           </div>
 
           {/* Education */}
@@ -69,21 +31,7 @@ export default function Resume() {
               <span className="material-symbols-outlined text-primary text-4xl">school</span>
               <h3 className="text-3xl font-bold">Education</h3>
             </div>
-            <div className="space-y-10 ml-4">
-              {education.map((edu) => (
-                <div key={edu.id} className="relative pl-6 border-l-2 border-slate-200 dark:border-slate-700">
-                  <div className="absolute -left-[9px] top-1.5 size-4 rounded-full bg-slate-200 dark:bg-slate-700"></div>
-                  <h4 className="text-lg font-bold">{edu.degree}</h4>
-                  <p className="text-base text-text-light-secondary dark:text-text-dark-secondary font-medium">
-                    {edu.institution}
-                  </p>
-                  <div className="flex flex-wrap gap-4 mt-3 text-base text-text-light-secondary dark:text-text-dark-secondary">
-                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[18px]">calendar_month</span> {edu.period}</span>
-                    <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[18px]">grade</span> {edu.score}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <EducationCards education={education} />
           </div>
 
           {/* Skills */}

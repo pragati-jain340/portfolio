@@ -10,7 +10,7 @@ export const profile: Profile = {
   titles: ["AI Engineer", "Computer Vision", "Agentic Systems"],
   bio: [
     "Working on **Agentic AI**, **Computer Vision**, **Deep Learning**, and **Machine Learning**. B.Tech Computer Engineering @ Aligarh Muslim University.",
-    "Currently an **AI Engineer Intern at BMW Group (Munich)**, with prior experience building AI pipelines at **Savgen** and research background at **IIT BHU**.",
+    "Currently an **AI Engineer Intern at BMW Group (Munich)**, with prior experience building AI pipelines at **SourceWorx AI** and research background at **IIT BHU**.",
     "Co-author of the NeurIPS MusIML workshop paper **From Rules to Pixels (LaGPS)**."
   ]
 };
