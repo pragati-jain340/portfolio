@@ -7,6 +7,8 @@ import { featuredProjects, type FeaturedProject } from "@/data/featured-projects
 import styles from "./Projects.module.css";
 
 const projectActions = [
+  { field: "report", label: "Project Report", icon: "description" },
+  { field: "slides", label: "Slides", icon: "slideshow" },
   { field: "ppt", label: "PPT", icon: "slideshow" },
   { field: "code", label: "Code", icon: "code" },
   { field: "code1", label: "Hand Tracking", icon: "back_hand" },
@@ -138,7 +140,7 @@ export default function Projects() {
                       const url = project[field];
                       if (!url || url === "#") return null;
                       return (
-                        <a key={field} href={url} target="_blank" rel="noopener noreferrer" className={styles.action} data-primary={field === "demo" || field === "ppt"}>
+                        <a key={field} href={url} target="_blank" rel="noopener noreferrer" className={styles.action} data-primary={field === "report" || field === "demo" || field === "ppt"}>
                           <span className="material-symbols-outlined" aria-hidden="true">{icon}</span>
                           {label}
                         </a>
@@ -152,7 +154,7 @@ export default function Projects() {
                   <div className={styles.imageWindow} data-project-image>
                     <div className={styles.artwork} data-project-artwork>
                       {project.image ? (
-                        <Image src={project.image} alt={project.title} fill sizes="(min-width: 1024px) 45vw, 90vw" className={styles.image} />
+                        <Image src={project.image} alt={project.imageAlt ?? project.title} fill sizes="(min-width: 1024px) 45vw, 90vw" className={styles.image} />
                       ) : (
                         <span className={`${styles.fallbackIcon} material-symbols-outlined`} aria-hidden="true">{project.icon}</span>
                       )}

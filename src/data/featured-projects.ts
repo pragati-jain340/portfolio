@@ -6,6 +6,9 @@ export interface FeaturedProject {
   tags: string[];
   icon: string;
   image?: string;
+  imageAlt?: string;
+  report?: string;
+  slides?: string;
   ppt?: string;
   code?: string;
   code1?: string;
@@ -15,6 +18,18 @@ export interface FeaturedProject {
 }
 
 export const featuredProjects: FeaturedProject[] = [
+  {
+    id: "dkd-qwen",
+    category: "Biomedical Language Models",
+    title: "DKD-Qwen",
+    description: "Adapted Qwen3.5-4B-Base for diabetic kidney disease research through continued pretraining. In Phase I, we curated a 163M-token corpus and trained on a single NVIDIA H100, reducing perplexity on held-out DKD text by 6.8%.",
+    tags: ["Qwen3.5-4B", "Continued Pretraining", "Corpus Curation", "Model Evaluation"],
+    icon: "biotech",
+    image: "/dkd-qwen.webp",
+    imageAlt: "DKD literature flows through corpus curation and continued pretraining to held-out evaluation.",
+    report: "https://drive.google.com/file/d/1opqUEAgJKwzGbYFq3eTkFy-2AyULjePE/view?usp=sharing",
+    slides: "https://drive.google.com/file/d/1NpzkRzS6UEUG6q5DRP4mnlQMy-YLg8NJ/view?usp=sharing",
+  },
   {
     id: "agenda-ai",
     category: "Agentic AI System",
