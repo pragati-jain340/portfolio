@@ -11,6 +11,7 @@ const projectActions = [
   { field: "code1", label: "Hand Tracking Code", icon: "back_hand" },
   { field: "code2", label: "Pose Estimation Code", icon: "view_in_ar" },
   { field: "demo", label: "Demo", icon: "play_circle" },
+  { field: "website", label: "Live Website", icon: "language" },
   { field: "video", label: "Video", icon: "smart_display" },
 ] as const;
 

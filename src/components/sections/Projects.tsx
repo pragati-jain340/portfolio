@@ -7,12 +7,16 @@ import { featuredProjects, projectTopics } from "@/data/featured-projects";
 import styles from "./Projects.module.css";
 
 const filters = ["All projects", ...projectTopics] as const;
+const INITIAL_VISIBLE_COUNT = 5;
 
 export default function Projects() {
   const [filter, setFilter] = useState<(typeof filters)[number]>("All projects");
+  const [showAll, setShowAll] = useState(false);
   const projects = filter === "All projects"
     ? featuredProjects
     : featuredProjects.filter((project) => project.topic === filter);
+  const hasMoreProjects = projects.length > INITIAL_VISIBLE_COUNT;
+  const visibleProjects = showAll ? projects : projects.slice(0, INITIAL_VISIBLE_COUNT);
 
   const updateCardTilt = (event: PointerEvent<HTMLAnchorElement>) => {
     if (event.pointerType === "touch") return;
@@ -47,15 +51,20 @@ export default function Projects() {
             className={styles.filter}
             aria-pressed={filter === topic}
             aria-controls="project-gallery"
-            onClick={() => setFilter(topic)}
+            onClick={() => {
+              setFilter(topic);
+              setShowAll(false);
+            }}
           >
             {topic}
           </button>
         ))}
       </div>
-      <p className="sr-only" role="status">{projects.length} {projects.length === 1 ? "project" : "projects"} shown</p>
+      <p className="sr-only" role="status">
+        {visibleProjects.length} {visibleProjects.length === 1 ? "project" : "projects"} shown
+      </p>
       <div id="project-gallery" className={styles.gallery}>
-        {projects.map((project) => (
+        {visibleProjects.map((project) => (
           <article key={project.id} className={styles.item}>
             <Link
               href={project.details ?? `/projects/${project.id}`}
@@ -91,6 +100,26 @@ export default function Projects() {
           </article>
         ))}
       </div>
+      {hasMoreProjects && (
+        <div className={styles.toggleRow}>
+          <button
+            type="button"
+            className={styles.toggleBtn}
+            aria-expanded={showAll}
+            aria-controls="project-gallery"
+            onClick={() => setShowAll((prev) => !prev)}
+          >
+            <span>{showAll ? "Show less" : `See all (${projects.length})`}</span>
+            <span
+              className={`material-symbols-outlined ${styles.toggleArrow}`}
+              data-expanded={showAll ? "true" : undefined}
+              aria-hidden="true"
+            >
+              arrow_forward
+            </span>
+          </button>
+        </div>
+      )}
     </section>
   );
 }

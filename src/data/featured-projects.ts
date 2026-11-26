@@ -1,4 +1,4 @@
-export const projectTopics = ["Language Models", "Agentic AI", "Computer Vision", "Applied ML"] as const;
+export const projectTopics = ["Language Models", "Agentic AI", "Computer Vision", "Applied ML", "Full-Stack Web"] as const;
 
 export interface FeaturedProject {
   id: string;
@@ -18,6 +18,7 @@ export interface FeaturedProject {
   code1?: string;
   code2?: string;
   demo?: string;
+  website?: string;
   video?: string;
 }
 
@@ -86,6 +87,19 @@ export const featuredProjects: FeaturedProject[] = [
     image: "/newssure.jpg",
     ppt: "https://www.canva.com/design/DAG1hBQCUdQ/jLhRkG2ors_WmiblLnepXg/view?utlId=hf1a14976c0",   // TODO: replace with actual PPT link
     code: "https://github.com/pragati-jain340/NewsSure.git",  // TODO: replace with actual code link
+  },
+  {
+    id: "theastrokaur",
+    category: "Full-Stack Web Platform",
+    topic: "Full-Stack Web",
+    title: "TheAstroKaur",
+    description: "Vedic astrology consultation website built with Next.js, React, TypeScript, Tailwind CSS, and Supabase, deployed on Vercel. Features reading service showcases, consultation booking with Google Calendar integration, Edge Functions, responsive light/dark modes, and client review sections.",
+    tags: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Supabase", "Google Calendar"],
+    icon: "auto_awesome",
+    image: "/theastrokaur.jpg",
+    imageAlt: "TheAstroKaur website preview across laptop and mobile screens featuring celestial typography, zodiac chart wheel illustration, and consultation CTAs.",
+    code: "https://github.com/pragati-jain340/TheAstroKaur",
+    website: "https://theastrokaur-astro-kaur-web.vercel.app/",
   },
   {
     id: "hand-pose-tracking",

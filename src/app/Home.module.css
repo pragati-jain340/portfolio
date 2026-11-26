@@ -240,11 +240,65 @@
   line-height: 0.96;
 }
 
+.typeSlot {
+  position: relative;
+}
+
+.typeGhost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.16em;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.typeLive {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.typeLive .bigNameArrow {
+  margin-left: 0.16em;
+}
+
+.typeCursor {
+  display: inline-block;
+  width: 0.06em;
+  height: 0.84em;
+  margin-left: 0.05em;
+  border-radius: 2px;
+  background: var(--hero-accent);
+  flex-shrink: 0;
+  animation: hero-cursor-blink 650ms step-end infinite;
+}
+
+.typeCursorDone {
+  animation: hero-cursor-fade 1.3s ease forwards;
+}
+
+@keyframes hero-cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes hero-cursor-fade {
+  0%, 30%, 60% { opacity: 1; }
+  15%, 45%, 100% { opacity: 0; width: 0; margin-left: 0; }
+}
+
 .bigNameArrow {
   display: inline-block;
   color: var(--hero-accent);
   font-weight: 500;
-  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), opacity 240ms ease;
+}
+
+.bigNameArrowHidden {
+  opacity: 0;
+  transform: translateX(-8px);
 }
 
 .bigName:hover .bigNameArrow {
@@ -392,11 +446,31 @@
 .bigNameRow    { --hero-delay: 540ms; }
 
 .badgePrimary {
-  animation: badge-pop 560ms cubic-bezier(0.22, 1, 0.36, 1) 700ms both;
+  animation: badge-pop 560ms cubic-bezier(0.22, 1, 0.36, 1) 500ms both;
 }
 
 .badgeSecondary {
-  animation: badge-pop 560ms cubic-bezier(0.22, 1, 0.36, 1) 860ms both;
+  animation: badge-pop 560ms cubic-bezier(0.22, 1, 0.36, 1) 660ms both;
+}
+
+.hero[data-replayed="true"][data-in-view="true"] .badgePrimary {
+  animation: badge-pop 540ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+}
+
+.hero[data-replayed="true"][data-in-view="true"] .badgeSecondary {
+  animation: badge-pop 540ms cubic-bezier(0.22, 1, 0.36, 1) 240ms both;
+}
+
+.hero[data-in-view="false"] .badgePrimary,
+.hero[data-in-view="false"] .badgeSecondary {
+  animation: none;
+  opacity: 0;
+}
+
+.hero[data-in-view="false"] .badgePrimary,
+.hero[data-in-view="false"] .badgeSecondary {
+  animation: none;
+  opacity: 0;
 }
 
 @keyframes hero-enter {
