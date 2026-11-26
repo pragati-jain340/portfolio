@@ -2,6 +2,10 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+html:has(.intro-loader) {
+  overflow: hidden;
+}
+
 .intro-loader {
   position: fixed;
   inset: 0;
@@ -56,14 +60,6 @@
   animation-delay: 140ms;
 }
 
-.intro-loader[data-phase="exiting"] ~ main #home > div {
-  animation: intro-home-reveal 1000ms cubic-bezier(0.22, 1, 0.36, 1) 250ms both;
-}
-
-.intro-loader[data-phase="exiting"] ~ main #home > div + div {
-  animation-delay: 380ms;
-}
-
 .intro-loader[data-phase="exiting"] ~ nav {
   animation: intro-nav-reveal 900ms cubic-bezier(0.22, 1, 0.36, 1) 380ms both;
 }
@@ -96,11 +92,6 @@
 @keyframes intro-exit-complete {
   from { pointer-events: auto; }
   to { pointer-events: none; }
-}
-
-@keyframes intro-home-reveal {
-  from { opacity: 0; transform: translateY(48px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes intro-nav-reveal {
@@ -213,7 +204,11 @@
   }
 
   section[id] {
-    scroll-margin-top: 110px;
+    scroll-margin-top: 84px;
+  }
+
+  section[id].portfolio-section {
+    scroll-margin-top: 0;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -228,7 +223,7 @@
     --color-dark-primary: #14B8A6;
     --color-dark-primary-hover: #0D9488;
 
-    --color-background-light: #F5F7FA;
+    --color-background-light: #F2F7F6;
     --color-background-dark: #111827;
 
     --color-text-light-primary: #1F2937;
@@ -249,11 +244,24 @@
   body {
     @apply bg-background-light text-text-light-primary transition-colors duration-300 relative min-h-screen;
   }
+
+  body {
+    background-image:
+      radial-gradient(ellipse 80% 50% at 12% 8%, rgba(20, 184, 166, 0.08), transparent 60%),
+      radial-gradient(ellipse 70% 55% at 88% 30%, rgba(13, 148, 136, 0.06), transparent 65%),
+      radial-gradient(ellipse 80% 50% at 50% 92%, rgba(94, 234, 212, 0.08), transparent 60%);
+  }
+
+  html.dark body {
+    background-image:
+      radial-gradient(ellipse 80% 50% at 15% 10%, rgba(20, 184, 166, 0.09), transparent 60%),
+      radial-gradient(ellipse 70% 55% at 85% 35%, rgba(13, 148, 136, 0.07), transparent 65%);
+  }
 }
 
 @layer utilities {
   .portfolio-section {
-    @apply border-t border-slate-200/70 py-16 md:py-24 dark:border-slate-800;
+    @apply border-t border-slate-200/70 py-12 md:py-24 dark:border-slate-800;
   }
 
   .glass {
@@ -265,7 +273,7 @@
   }
 
   .glass-card {
-    @apply bg-white border border-slate-100 backdrop-blur-sm shadow-xl shadow-slate-200/50;
+    @apply bg-white border border-slate-100 shadow-xl shadow-slate-200/50;
   }
 
   .dark .glass-card {
@@ -281,6 +289,15 @@
   .dark .theme-grid {
     background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  }
+
+  /* Subtle warm background wash for the whole site */
+  .subtle-bg {
+    background: linear-gradient(135deg, #f8fafb 0%, #f0f7f6 50%, #f5f7fa 100%);
+  }
+
+  .dark .subtle-bg {
+    background: linear-gradient(135deg, #0f1724 0%, #111b27 50%, #111827 100%);
   }
 
 }

@@ -50,6 +50,7 @@ export default function SkillsExplorer({ categories }: { categories: SkillCatego
       indicator.style.height = `${tab.offsetHeight}px`;
       indicator.style.transform = `translate3d(${tab.offsetLeft}px, ${tab.offsetTop}px, 0)`;
       indicator.style.opacity = "1";
+      element.dataset.highlightReady = "true";
     };
     positionHighlight();
     const observer = new ResizeObserver(positionHighlight);
@@ -158,13 +159,7 @@ export default function SkillsExplorer({ categories }: { categories: SkillCatego
         tabIndex={0}
         className={styles.panel}
         data-skill-panel
-        data-featured={category.id === "core-ai-ml"}
-        style={{ "--skill-columns": selected === 0 ? 4 : Math.min(skills.length, 5) } as CSSProperties}
       >
-        <div className={styles.heading}>
-          <h4>{category.title}</h4>
-          <span className={styles.count}>{skills.length} skills</span>
-        </div>
         <ul className={styles.grid}>
           {skills.map(({ skill, key, icon }, skillIndex) => (
             <li key={key} className={styles.item} data-skill-card style={{ "--skill-delay": `${Math.min(skillIndex, 7) * 45}ms` } as CSSProperties}>

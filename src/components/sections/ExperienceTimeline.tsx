@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { Experience } from "@/data/experience";
 import styles from "./ExperienceTimeline.module.css";
@@ -18,6 +18,11 @@ export default function ExperienceTimeline({ experiences }: { experiences: Exper
   const timeline = useRef<HTMLDivElement>(null);
   const route = useRef<SVGPathElement>(null);
   const head = useRef<SVGCircleElement>(null);
+  const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   useEffect(() => {
     const element = timeline.current;
@@ -120,35 +125,68 @@ export default function ExperienceTimeline({ experiences }: { experiences: Exper
         <circle ref={head} className={styles.head} r="4" />
       </svg>
       <ol className={styles.entries}>
-        {experiences.map((experience) => (
-          <li key={experience.id} className={styles.entry} data-timeline-entry>
-            <span className={styles.point} data-timeline-point aria-hidden="true" />
-            <article className={styles.card}>
-              <div className={styles.robotPosition}>
-                <TimelineRobot />
-              </div>
-              <div className={styles.cardTop}>
-                <span className={experience.logo ? styles.companyLogo : styles.icon} data-logo-style={experience.logoStyle}>
-                  {experience.logo ? (
-                    <Image src={experience.logo} alt={`${experience.company} logo`} width={48} height={48} className={styles.logoImage} />
-                  ) : (
-                    <span className="material-symbols-outlined" aria-hidden="true">work</span>
-                  )}
-                </span>
-                <span className={styles.period}>{experience.period}</span>
-              </div>
-              <h4 className={styles.role}>{experience.role}</h4>
-              <p className={styles.company}>{experience.company}</p>
-              {experience.description.length > 0 && (
-                <ul className={styles.description}>
-                  {experience.description.map((description, index) => (
-                    <li key={index}>{renderDescription(description)}</li>
-                  ))}
-                </ul>
-              )}
-            </article>
-          </li>
-        ))}
+        {experiences.map((experience) => {
+          const isExpanded = Boolean(expandedIds[experience.id]);
+          const extraCount = Math.max(0, experience.description.length - 1);
+          return (
+            <li key={experience.id} className={styles.entry} data-timeline-entry>
+              <span className={styles.point} data-timeline-point aria-hidden="true" />
+              <article className={styles.card} data-expanded={isExpanded}>
+                <div className={styles.robotPosition}>
+                  <TimelineRobot />
+                </div>
+                <div className={styles.cardTop}>
+                  <span className={experience.logo ? styles.companyLogo : styles.icon} data-logo-style={experience.logoStyle}>
+                    {experience.logo ? (
+                      <Image src={experience.logo} alt={`${experience.company} logo`} width={48} height={48} className={styles.logoImage} />
+                    ) : (
+                      <span className="material-symbols-outlined" aria-hidden="true">work</span>
+                    )}
+                  </span>
+                  <span className={styles.period}>{experience.period}</span>
+                </div>
+                <h4 className={styles.role}>{experience.role}</h4>
+                <p className={styles.company}>{experience.company}</p>
+                {experience.description.length > 0 && (
+                  <>
+                    <ul className={styles.description} id={`exp-desc-${experience.id}`}>
+                      {experience.description.map((description, index) => (
+                        <li key={index} data-extra={index > 0 ? "true" : undefined}>
+                          {renderDescription(description)}
+                        </li>
+                      ))}
+                    </ul>
+                    {extraCount > 0 && (
+                      <button
+                        type="button"
+                        className={styles.expandButton}
+                        aria-expanded={isExpanded}
+                        aria-controls={`exp-desc-${experience.id}`}
+                        onClick={() => toggleExpanded(experience.id)}
+                      >
+                        <span>{isExpanded ? "Show less" : `Read more (+${extraCount})`}</span>
+                        <svg
+                          className={styles.expandChevron}
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                      </button>
+                    )}
+                  </>
+                )}
+              </article>
+            </li>
+          );
+        })}
       </ol>
     </div>
   );

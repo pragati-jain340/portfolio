@@ -12,7 +12,14 @@
 .brand { margin: 0; color: #4b7775; font-size: 11px; font-weight: 600; letter-spacing: 0.24em; }
 .content { display: flex; align-items: center; justify-content: center; min-height: 0; }
 .stage { position: relative; width: min(100%, calc(100dvh * 16 / 9)); }
-.videoFrame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #fefffd; }
+.videoFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #fefffd;
+  /* Blend the media edge into the intro sheet to avoid a visible seam. */
+  mask-image: linear-gradient(to right, #000 calc(100% - 12px), transparent calc(100% - 3px));
+}
 .video, .poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .poster { pointer-events: none; }
 .videoFrame[data-poster="false"] .poster { visibility: hidden; }

@@ -90,8 +90,6 @@ export default function IntroLoader() {
 
   useEffect(() => {
     if (finished) return;
-    const previousOverflow = document.documentElement.style.overflow;
-    document.documentElement.style.overflow = "hidden";
     const content = Array.from(document.querySelectorAll<HTMLElement>("body > main, body > nav, body > footer"));
     const previousInert = content.map((element) => element.inert);
     content.forEach((element) => { element.inert = true; });
@@ -100,7 +98,6 @@ export default function IntroLoader() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => {
-      document.documentElement.style.overflow = previousOverflow;
       content.forEach((element, index) => { element.inert = previousInert[index]; });
       window.removeEventListener("keydown", onKeyDown);
     };
@@ -121,7 +118,7 @@ export default function IntroLoader() {
 
   return (
     <>
-      <noscript><style>{".intro-loader { display: none !important; }"}</style></noscript>
+      <noscript><style>{"html:has(.intro-loader) { overflow: visible; } .intro-loader { display: none !important; }"}</style></noscript>
       <div
         className={`intro-loader ${styles.shell}`}
         data-phase={phase}

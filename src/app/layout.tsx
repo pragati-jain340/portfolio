@@ -38,7 +38,11 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={`${inter.variable} antialiased theme-grid`}>
+      {/* Extensions such as Grammarly can add body attributes before React hydrates. */}
+      <body
+        className={`${inter.variable} antialiased`}
+        suppressHydrationWarning={process.env.NODE_ENV === "development"}
+      >
         <IntroLoader />
         <BackgroundAnim />
         <Navbar />

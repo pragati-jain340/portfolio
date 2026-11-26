@@ -17,6 +17,9 @@ export const experiences: Experience[] = [
     logoStyle: "roundel",
     period: "Jun 2026 – Sept 2026",
     description: [
+      "Built an evaluation pipeline comparing AWS-managed agent harness, OpenAI Agents SDK and LangChain Deep Agents.",
+      "Integrated Agent Skills and used OpenTelemetry to analyze agent execution, tool interactions, latency and failures.",
+      "Used AWS, Terraform and AWS CDK to provision infrastructure and create reproducible AI agent environments."
     ]
   },
   {
