@@ -6,7 +6,7 @@
   --project-selected: #ecf9f6;
   display: grid;
   gap: 20px;
-  padding-block: clamp(52px, 5.5vw, 72px) clamp(32px, 5vw, 62px);
+  padding-block: clamp(72px, 7.5vw, 108px) clamp(64px, 7vw, 100px);
   scroll-margin-top: 0;
 }
 
@@ -51,9 +51,14 @@
   gap: 18px;
 }
 
-.item { min-width: 0; }
+.item {
+  min-width: 0;
+}
 
 .card {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  position: relative;
   display: grid;
   grid-template-rows: auto 1fr;
   height: 100%;
@@ -62,9 +67,21 @@
   border-radius: 16px;
   background: var(--project-surface);
   box-shadow: 0 8px 20px #0f172a08;
+  will-change: transform;
+  transform: perspective(750px) rotateX(0deg) rotateY(0deg);
+  transition: border-color 180ms ease, box-shadow 220ms ease,
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.card:hover { border-color: var(--project-accent); box-shadow: 0 14px 28px #0f172a14; }
+.card[data-tilting="true"] {
+  transition: border-color 180ms ease, box-shadow 220ms ease, transform 60ms linear;
+}
+
+.card:hover {
+  border-color: var(--project-accent);
+  box-shadow: 0 20px 38px rgba(15, 23, 42, 0.13);
+  transform: perspective(750px) translateY(-5px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) scale(1.015);
+}
 
 .filter:focus-visible, .card:focus-visible {
   outline: 2px solid var(--project-accent);
@@ -80,7 +97,13 @@
   background: #fafafa;
 }
 
-.image { object-fit: contain; }
+.image {
+  object-fit: contain;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.card:hover .image {
+  transform: scale(1.03);
+}
 .fallbackIcon { color: #0f766e; font-size: 52px; }
 
 .copy {
@@ -114,7 +137,13 @@
   font-size: 12px;
   font-weight: 700;
 }
-.open :global(.material-symbols-outlined) { font-size: 16px; }
+.open :global(.material-symbols-outlined) {
+  font-size: 16px;
+  transition: transform 200ms ease;
+}
+.card:hover .open :global(.material-symbols-outlined) {
+  transform: translateX(4px);
+}
 
 @media (min-width: 640px) {
   .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -122,9 +151,4 @@
 
 @media (min-width: 1024px) {
   .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .card { transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease; }
-  .card:hover { transform: translateY(-3px); }
 }

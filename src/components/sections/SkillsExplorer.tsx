@@ -19,25 +19,43 @@ const skillIcons: Record<string, string> = {
 
 export default function SkillsExplorer({ categories }: { categories: SkillCategory[] }) {
   const filters = [{ id: "all-skills", title: "All skills", icon: "apps", skills: [] }, ...categories];
-  const [selected, setSelected] = useState(categories.length ? 1 : 0);
+  const [selected, setSelected] = useState(0);
   const root = useRef<HTMLDivElement>(null);
   const tabList = useRef<HTMLDivElement>(null);
   const highlight = useRef<HTMLSpanElement>(null);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const mounted = useRef(false);
+  const compactRef = useRef(false);
   const requested = useRef(selected);
   const committed = useRef(selected);
   const transitioning = useRef(false);
   const id = `skills-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
-  const category = filters[selected];
-  const skills = selected === 0
-    ? categories.flatMap((group) => group.skills.map((skill) => ({ skill, key: `${group.id}-${skill}`, icon: group.icon })))
-    : category.skills.map((skill) => ({ skill, key: `${category.id}-${skill}`, icon: category.icon }));
+  const category = filters[selected] ?? filters[1] ?? filters[0];
+  const skills = category.skills.map((skill) => ({
+    skill,
+    key: `${category.id}-${skill}`,
+    icon: category.icon,
+  }));
 
   useEffect(() => {
     mounted.current = true;
     return () => { mounted.current = false; };
   }, []);
+
+  useLayoutEffect(() => {
+    const media = window.matchMedia("(max-width: 1023px)");
+    const syncViewport = () => {
+      compactRef.current = media.matches;
+      if (media.matches && committed.current === 0 && filters.length > 1) {
+        requested.current = 1;
+        committed.current = 1;
+        setSelected(1);
+      }
+    };
+    syncViewport();
+    media.addEventListener("change", syncViewport);
+    return () => media.removeEventListener("change", syncViewport);
+  }, [filters.length]);
 
   useLayoutEffect(() => {
     const element = tabList.current;
@@ -64,8 +82,6 @@ export default function SkillsExplorer({ categories }: { categories: SkillCatego
     if (transitioning.current) return;
     transitioning.current = true;
     try {
-      // Finish the current transition, then go straight to the latest request.
-      // This avoids a long backlog when clicking or pressing arrow keys quickly.
       while (mounted.current && committed.current !== requested.current) {
         const target = requested.current;
         if (!("startViewTransition" in document)) {
@@ -86,13 +102,11 @@ export default function SkillsExplorer({ categories }: { categories: SkillCatego
           .enter({ opacity: [0, 1], scale: [0.88, 1] }, { delay: stagger(0.025) })
           .exit({ opacity: [1, 0], scale: [1, 0.9] }, { duration: 0.2, delay: stagger(0.015) });
         try {
-          // Motion 14's builder resolves to playback controls at runtime.
           const controls: unknown = await animation;
           if (controls && typeof controls === "object" && "finished" in controls) {
             await controls.finished;
           }
         } catch {
-          // Keep filtering functional if the browser skips a snapshot.
           if (mounted.current) setSelected(target);
         }
         committed.current = target;
@@ -116,10 +130,12 @@ export default function SkillsExplorer({ categories }: { categories: SkillCatego
   }, []);
 
   const navigateTabs = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const minIndex = compactRef.current && filters.length > 1 ? 1 : 0;
+    const span = filters.length - minIndex;
     let next = index;
-    if (event.key === "ArrowRight") next = (index + 1) % filters.length;
-    else if (event.key === "ArrowLeft") next = (index - 1 + filters.length) % filters.length;
-    else if (event.key === "Home") next = 0;
+    if (event.key === "ArrowRight") next = minIndex + ((index - minIndex + 1) % span);
+    else if (event.key === "ArrowLeft") next = minIndex + ((index - minIndex - 1 + span) % span);
+    else if (event.key === "Home") next = minIndex;
     else if (event.key === "End") next = filters.length - 1;
     else return;
     event.preventDefault();
@@ -144,7 +160,7 @@ export default function SkillsExplorer({ categories }: { categories: SkillCatego
             tabIndex={selected === index ? 0 : -1}
             onClick={() => { void selectCategory(index); }}
             onKeyDown={(event) => navigateTabs(event, index)}
-            className={styles.tab}
+            className={`${styles.tab} ${index === 0 ? styles.allSkillsTab : ""}`}
           >
             <span className="material-symbols-outlined" aria-hidden="true">{filter.icon}</span>
             {filter.title}
@@ -160,18 +176,71 @@ export default function SkillsExplorer({ categories }: { categories: SkillCatego
         className={styles.panel}
         data-skill-panel
       >
-        <ul className={styles.grid}>
-          {skills.map(({ skill, key, icon }, skillIndex) => (
-            <li key={key} className={styles.item} data-skill-card style={{ "--skill-delay": `${Math.min(skillIndex, 7) * 45}ms` } as CSSProperties}>
-              <div className={styles.tile}>
-                <span className={styles.icon} aria-hidden="true">
-                  <span className="material-symbols-outlined">{skillIcons[skill] ?? icon}</span>
+        {selected === 0 ? (
+          <div className={styles.bento}>
+            {categories.map((group, groupIndex) => (
+              <section
+                key={`group-${group.id}`}
+                className={styles.groupCard}
+                data-skill-card
+                data-wide={groupIndex < 2 ? "true" : undefined}
+                style={{ "--skill-delay": `${groupIndex * 55}ms` } as CSSProperties}
+                aria-labelledby={`${id}-group-${group.id}`}
+              >
+                <header className={styles.groupHeader}>
+                  <div className={styles.groupTitleWrap}>
+                    <span className={styles.groupIcon} aria-hidden="true">
+                      <span className="material-symbols-outlined">{group.icon}</span>
+                    </span>
+                    <h4 id={`${id}-group-${group.id}`} className={styles.groupTitle}>
+                      {group.title}
+                    </h4>
+                  </div>
+                  <span className={styles.groupCount}>{group.skills.length}</span>
+                </header>
+                <ul className={styles.chipList}>
+                  {group.skills.map((skill) => (
+                    <li key={skill} className={styles.chip}>
+                      <span className={`material-symbols-outlined ${styles.chipIcon}`} aria-hidden="true">
+                        {skillIcons[skill] ?? group.icon}
+                      </span>
+                      <span>{skill}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        ) : (
+          <div className={styles.categoryStage}>
+            <div className={styles.stageHeader}>
+              <div className={styles.groupTitleWrap}>
+                <span className={styles.groupIcon} aria-hidden="true">
+                  <span className="material-symbols-outlined">{category.icon}</span>
                 </span>
-                <span className={styles.skill}>{skill}</span>
+                <span className={styles.groupTitle}>{category.title}</span>
               </div>
-            </li>
-          ))}
-        </ul>
+              <span className={styles.groupCount}>{skills.length} skills</span>
+            </div>
+            <ul className={styles.grid}>
+              {skills.map(({ skill, key, icon }, skillIndex) => (
+                <li
+                  key={key}
+                  className={styles.item}
+                  data-skill-card
+                  style={{ "--skill-delay": `${Math.min(skillIndex, 7) * 45}ms` } as CSSProperties}
+                >
+                  <div className={styles.tile}>
+                    <span className={styles.icon} aria-hidden="true">
+                      <span className="material-symbols-outlined">{skillIcons[skill] ?? icon}</span>
+                    </span>
+                    <span className={styles.skill}>{skill}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

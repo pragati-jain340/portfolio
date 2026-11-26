@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type PointerEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { featuredProjects, projectTopics } from "@/data/featured-projects";
@@ -13,6 +13,28 @@ export default function Projects() {
   const projects = filter === "All projects"
     ? featuredProjects
     : featuredProjects.filter((project) => project.topic === filter);
+
+  const updateCardTilt = (event: PointerEvent<HTMLAnchorElement>) => {
+    if (event.pointerType === "touch") return;
+
+    const card = event.currentTarget;
+    const rect = card.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+
+    const px = Math.max(-0.5, Math.min(0.5, (event.clientX - rect.left) / rect.width - 0.5));
+    const py = Math.max(-0.5, Math.min(0.5, (event.clientY - rect.top) / rect.height - 0.5));
+
+    card.dataset.tilting = "true";
+    card.style.setProperty("--tilt-x", `${(-py * 14).toFixed(2)}deg`);
+    card.style.setProperty("--tilt-y", `${(px * 16).toFixed(2)}deg`);
+  };
+
+  const resetCardTilt = (event: PointerEvent<HTMLAnchorElement>) => {
+    const card = event.currentTarget;
+    delete card.dataset.tilting;
+    card.style.setProperty("--tilt-x", "0deg");
+    card.style.setProperty("--tilt-y", "0deg");
+  };
 
   return (
     <section className={`portfolio-section ${styles.section}`} id="projects" aria-labelledby="projects-title">
@@ -39,6 +61,9 @@ export default function Projects() {
               href={project.details ?? `/projects/${project.id}`}
               aria-labelledby={`project-title-${project.id}`}
               className={styles.card}
+              onPointerEnter={updateCardTilt}
+              onPointerMove={updateCardTilt}
+              onPointerLeave={resetCardTilt}
             >
               <div className={styles.thumbnail}>
                 {project.image ? (

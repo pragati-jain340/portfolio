@@ -8,7 +8,7 @@ import SkillsExplorer from "./SkillsExplorer";
 export default function Resume() {
   return (
     <>
-      <section className="portfolio-section space-y-8 md:space-y-16" id="experience">
+      <section className="portfolio-section space-y-10 md:space-y-16" id="experience">
         <div className="text-center space-y-2 md:space-y-4">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black">Professional Journey</h2>
           <p className="text-sm sm:text-base text-text-light-secondary dark:text-text-dark-secondary">
@@ -16,7 +16,7 @@ export default function Resume() {
           </p>
         </div>
 
-        <div className="space-y-6 md:space-y-12">
+        <div className="space-y-10 sm:space-y-12 lg:space-y-14">
           {/* Work Experience */}
           <div className="glass-card p-3.5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl">
             <div className="flex items-center gap-3 sm:gap-4 mb-10 sm:mb-10">

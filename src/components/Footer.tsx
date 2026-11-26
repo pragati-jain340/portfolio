@@ -1,21 +1,25 @@
 import Link from "next/link";
 import Image from "next/image";
+import { contactInfo } from "@/data/contact";
 
 export default function Footer() {
   return (
-    <footer className="bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 py-12 px-6 relative z-10 block">
-      <div className="max-w-[90rem] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-        <Link href="/#home" className="footer-brand flex items-center gap-2">
+    <footer className="bg-white dark:bg-slate-900 border-t border-slate-200/70 dark:border-slate-800 py-7 px-6 sm:py-8 lg:py-10 relative z-10 block">
+      <div className="max-w-[90rem] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3.5 sm:gap-6">
+        <Link href="/#home" className="footer-brand flex items-center gap-2.5">
           <Image src="/logo.png" alt="PJ Logo" width={36} height={36} className="rounded-full" />
           <span className="text-xl font-bold tracking-tight">Pragati Jain</span>
         </Link>
-        <div className="flex gap-12 text-sm text-text-light-secondary dark:text-text-dark-secondary font-medium">
-          <span>pragatijain841@gmail.com</span>
-        </div>
-        <div className="flex gap-4">
+        <a
+          href={`mailto:${contactInfo.email}`}
+          className="text-sm text-text-light-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-dark-primary transition-colors font-medium"
+        >
+          {contactInfo.email}
+        </a>
+        <div className="flex items-center gap-3">
           <a
             className="footer-social"
-            href="https://github.com/pragati-jain340"
+            href={contactInfo.github}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
@@ -26,7 +30,7 @@ export default function Footer() {
           </a>
           <a
             className="footer-social"
-            href="https://linkedin.com/in/pragati-jain-7271b7336"
+            href={contactInfo.linkedin}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"

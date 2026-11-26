@@ -6,19 +6,34 @@ import styles from "./Contact.module.css";
 
 export default function Contact() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [copied, setCopied] = useState(false);
   const contactCard = useRef<HTMLDivElement>(null);
+  const copyTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     const card = contactCard.current;
     if (!card || !("IntersectionObserver" in window)) return;
     card.dataset.enhanced = "true";
     const observer = new IntersectionObserver(([entry]) => {
-      // Reset only after leaving the viewport, so every return replays the entrance.
       card.dataset.revealed = String(entry.isIntersecting);
     }, { threshold: 0, rootMargin: "0px 0px -8% 0px" });
     observer.observe(card);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (copyTimerRef.current !== null) window.clearTimeout(copyTimerRef.current);
+    };
   }, []);
+
+  async function handleCopyEmail() {
+    try {
+      await navigator.clipboard.writeText(contactInfo.email);
+      setCopied(true);
+      if (copyTimerRef.current !== null) window.clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard API unavailable; mailto link remains directly clickable.
+    }
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -45,111 +60,147 @@ export default function Contact() {
   }
 
   return (
-    <>
-      <section className="portfolio-section space-y-10 md:space-y-16" id="contact">
-        <div className="text-center space-y-4">
-          <h2 className="text-5xl font-black">Contact</h2>
-          <p className="text-base text-text-light-secondary dark:text-text-dark-secondary">
+    <section className={`portfolio-section ${styles.contactSection}`} id="contact">
+      <div className="max-w-5xl mx-auto space-y-3.5 sm:space-y-6 md:space-y-8">
+        <div className="text-center space-y-1.5 sm:space-y-2">
+          <h2 className="text-2xl sm:text-4xl font-black tracking-tight">Contact</h2>
+          <p className="hidden sm:block text-base text-text-light-secondary dark:text-text-dark-secondary">
             Open to research collaborations, AI projects, and new opportunities.
           </p>
         </div>
-        <div ref={contactCard} className={`${styles.revealRoot} glass-card rounded-[3rem] p-12 lg:p-20 grid grid-cols-1 lg:grid-cols-2 gap-16 overflow-hidden relative`}>
-          <div className="absolute -bottom-20 -left-20 size-80 bg-primary/20 blur-3xl rounded-full"></div>
-          
-          <div className="space-y-8 relative z-10">
-            <div className={`${styles.introPiece} space-y-4`} data-contact-entrance="left">
-              <h2 className="text-5xl font-black">
-                Let&apos;s build<br />something <span className="text-primary">intelligent</span>.
-              </h2>
-              <p className="text-text-light-secondary dark:text-text-dark-secondary text-base">
-                I&apos;m always open to discussing research collaborations, AI projects, or opportunities in computer vision and machine learning.
+
+        <div
+          ref={contactCard}
+          className={`${styles.revealRoot} ${styles.card} grid grid-cols-1 lg:grid-cols-12 rounded-2xl sm:rounded-3xl overflow-hidden`}
+        >
+          {/* Left tinted info panel */}
+          <div className={`${styles.infoPanel} lg:col-span-5 p-3.5 sm:p-7 lg:p-8 flex flex-col justify-between gap-2.5 sm:gap-6`}>
+            <div className={`${styles.introPiece} space-y-1 sm:space-y-3`} data-contact-entrance="left">
+              <span className={styles.eyebrow}>Get in touch</span>
+              <h3 className="text-lg sm:text-3xl font-extrabold leading-snug tracking-tight">
+                Let&apos;s build something <span className="text-primary dark:text-dark-primary">intelligent</span>.
+              </h3>
+              <p className="hidden sm:block text-sm text-text-light-secondary dark:text-text-dark-secondary leading-relaxed">
+                Always open to discussing research collaborations, AI projects, or opportunities in computer vision and agentic systems.
               </p>
             </div>
 
-            <div className={`${styles.detailsPiece} space-y-6`} data-contact-entrance="left">
-              <div className="flex items-center gap-6">
-                <div className="size-16 rounded-full glass flex items-center justify-center text-primary dark:text-dark-primary">
-                  <span className="material-symbols-outlined text-3xl">mail</span>
+            <div className={`${styles.detailsPiece} space-y-2 sm:space-y-3`} data-contact-entrance="left">
+              <div className={styles.infoRow}>
+                <div className={styles.infoIcon}>
+                  <span className="material-symbols-outlined text-[17px] sm:text-[20px]" aria-hidden="true">mail</span>
                 </div>
-                <div>
-                  <p className="text-sm font-bold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-widest">Email Me</p>
-                  <p className="text-lg font-bold">{contactInfo.email}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="hidden sm:block text-[11px] font-bold uppercase tracking-wider text-text-light-secondary dark:text-text-dark-secondary">
+                    Email
+                  </p>
+                  <a
+                    href={`mailto:${contactInfo.email}`}
+                    className="block text-[13px] sm:text-sm font-semibold whitespace-nowrap overflow-hidden text-ellipsis hover:text-primary dark:hover:text-dark-primary transition-colors"
+                  >
+                    {contactInfo.email}
+                  </a>
                 </div>
+                <button
+                  type="button"
+                  onClick={handleCopyEmail}
+                  className={styles.copyBtn}
+                  aria-label={copied ? "Email copied" : "Copy email address"}
+                  title={copied ? "Copied!" : "Copy email"}
+                >
+                  <span className="material-symbols-outlined text-[15px] sm:text-[16px]" aria-hidden="true">
+                    {copied ? "check" : "content_copy"}
+                  </span>
+                </button>
               </div>
 
-              <div className="flex items-center gap-6">
-                <div className="size-16 rounded-full glass flex items-center justify-center text-primary dark:text-dark-primary">
-                  <span className="material-symbols-outlined text-3xl">location_on</span>
+              <div className={`${styles.infoRow} ${styles.desktopLocationRow}`}>
+                <div className={styles.infoIcon}>
+                  <span className="material-symbols-outlined text-[20px]" aria-hidden="true">location_on</span>
                 </div>
-                <div>
-                  <p className="text-sm font-bold text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-widest">Location</p>
-                  <p className="text-lg font-bold">{contactInfo.location}</p>
+                <div className="min-w-0">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-text-light-secondary dark:text-text-dark-secondary">
+                    Location
+                  </p>
+                  <p className="text-sm font-semibold">{contactInfo.location}</p>
                 </div>
               </div>
             </div>
 
-            <div className={`${styles.socialPiece} flex gap-4 mt-4`} data-contact-entrance="left">
-              <a 
-                className="size-12 rounded-full glass flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-md shadow-primary/10" 
-                href={contactInfo.github} 
-                target="_blank" 
-                title="GitHub"
+            <div className={`${styles.socialPiece} flex flex-wrap gap-1.5 sm:gap-2.5`} data-contact-entrance="left">
+              <span className={`${styles.socialChip} ${styles.mobileLocationChip}`}>
+                <span className="material-symbols-outlined text-[14px] text-primary dark:text-dark-primary" aria-hidden="true">
+                  location_on
+                </span>
+                <span>{contactInfo.location}</span>
+              </span>
+              <a
+                className={styles.socialChip}
+                href={contactInfo.github}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <svg className="size-5 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                <svg className="size-3.5 sm:size-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                </svg>
+                <span>GitHub</span>
               </a>
-              <a 
-                className="size-12 rounded-full glass flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-md shadow-primary/10" 
-                href={contactInfo.linkedin} 
-                target="_blank" 
-                title="LinkedIn"
+              <a
+                className={styles.socialChip}
+                href={contactInfo.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <svg className="size-5 fill-current" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                <svg className="size-3.5 sm:size-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                </svg>
+                <span>LinkedIn</span>
               </a>
             </div>
           </div>
 
-          <div className="relative z-10 w-full">
-            <form onSubmit={handleSubmit} className={`${styles.form} space-y-6`}>
-              {/* Web3Forms access key — replace with your own key in .env.local */}
+          {/* Right form panel */}
+          <div className="lg:col-span-7 p-3.5 sm:p-7 lg:p-8 flex items-center">
+            <form onSubmit={handleSubmit} className={`${styles.form} w-full space-y-2.5 sm:space-y-4`}>
               <input type="hidden" name="access_key" value={process.env.NEXT_PUBLIC_WEB3FORMS_KEY ?? ""} />
-              {/* Customize the subject line of the email you receive */}
               <input type="hidden" name="subject" value="New message from your portfolio" />
 
-              <div className={`${styles.fieldsPiece} grid grid-cols-1 md:grid-cols-2 gap-6 w-full`} data-contact-entrance="right">
-                <div className="space-y-2 w-full">
-                  <label htmlFor="contact-name" className="text-lg font-bold px-1">Name</label>
-                  <input id="contact-name" name="name" autoComplete="name" required className={styles.field} placeholder="John Doe" type="text" />
+              <div className={`${styles.fieldsPiece} grid grid-cols-2 gap-2.5 sm:gap-4 w-full`} data-contact-entrance="right">
+                <div className="space-y-1 sm:space-y-1.5 w-full">
+                  <label htmlFor="contact-name" className="block text-xs sm:text-sm font-semibold px-0.5">Name</label>
+                  <input id="contact-name" name="name" autoComplete="name" required className={styles.field} placeholder="Your name" type="text" />
                 </div>
-                <div className="space-y-2 w-full">
-                  <label htmlFor="contact-email" className="text-lg font-bold px-1">Email</label>
-                  <input id="contact-email" name="email" autoComplete="email" required className={styles.field} placeholder="john@example.com" type="email" />
+                <div className="space-y-1 sm:space-y-1.5 w-full">
+                  <label htmlFor="contact-email" className="block text-xs sm:text-sm font-semibold px-0.5">Email</label>
+                  <input id="contact-email" name="email" autoComplete="email" required className={styles.field} placeholder="you@example.com" type="email" />
                 </div>
-              </div>
-              <div className={`${styles.messagePiece} space-y-2 w-full`} data-contact-entrance="right">
-                <label htmlFor="contact-message" className="text-lg font-bold px-1">Message</label>
-                <textarea id="contact-message" name="message" required className={styles.field} placeholder="How can I help you?" rows={4}></textarea>
               </div>
 
-              {/* Status messages */}
+              <div className={`${styles.messagePiece} space-y-1 sm:space-y-1.5 w-full`} data-contact-entrance="right">
+                <label htmlFor="contact-message" className="block text-xs sm:text-sm font-semibold px-0.5">Message</label>
+                <textarea id="contact-message" name="message" required className={`${styles.field} ${styles.textareaField}`} placeholder="How can I help you?" rows={4}></textarea>
+              </div>
+
               {status === "success" && (
-                <p className={`${styles.success} text-center font-semibold`}>✅ Message sent! I&apos;ll get back to you soon.</p>
+                <p className={`${styles.success} text-center text-sm font-semibold`}>Message sent! I&apos;ll get back to you soon.</p>
               )}
               {status === "error" && (
-                <p className={`${styles.error} text-center font-semibold`}>❌ Something went wrong. Please try again.</p>
+                <p className={`${styles.error} text-center text-sm font-semibold`}>Something went wrong. Please try again.</p>
               )}
 
               <button
                 type="submit"
                 data-contact-entrance="right"
                 disabled={status === "loading"}
-                className={`${styles.sendPiece} w-full bg-primary text-white font-black py-4 rounded-2xl hover:bg-primary-hover dark:bg-dark-primary dark:hover:bg-dark-primary-hover transition-all shadow-xl shadow-primary/20 text-xl disabled:opacity-60 disabled:cursor-not-allowed`}
+                className={`${styles.sendPiece} ${styles.submitBtn}`}
               >
-                {status === "loading" ? "Sending…" : "Send Message"}
+                <span>{status === "loading" ? "Sending…" : "Send Message"}</span>
+                <span className="material-symbols-outlined text-[18px]" aria-hidden="true">arrow_forward</span>
               </button>
             </form>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

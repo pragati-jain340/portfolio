@@ -68,7 +68,7 @@ export const featuredProjects: FeaturedProject[] = [
     category: "AI for Environmental Monitoring",
     topic: "Applied ML",
     title: "Satellite-Based Air Quality Estimation (ISRO Hackathon)",
-    description: "AI system for estimating ground-level PM2.5 concentrations using satellite data. Built an ensemble ML pipeline combining Random Forest, XGBoost, and LightGBM with feature engineering and hyperparameter tuning to predict air quality across India. Project selected as Top 28 out of 8400+ teams in the ISRO Bharatiya Antarashtriya Hackathon.",
+    description: "AI system for estimating ground-level PM2.5 concentrations using satellite data. Built an ensemble ML pipeline combining Random Forest, XGBoost, and LightGBM with feature engineering and hyperparameter tuning to predict air quality across India. Project ranked Top 2 for the given problem statement (Top 28 out of 8,400+ teams) in the ISRO Bharatiya Antariksh Hackathon.",
     tags: ["Python", "Machine Learning", "Random Forest", "XGBoost", "LightGBM", "Satellite Data"],
     icon: "satellite_alt",
     image: "/bah.png",
