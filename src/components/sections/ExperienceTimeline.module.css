@@ -263,6 +263,44 @@
   display: none;
 }
 
+.cardFooter {
+  margin-top: 18px;
+}
+
+.certificateLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid var(--timeline-border);
+  border-radius: 999px;
+  background: #0d94880d;
+  color: #0f766e;
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: none;
+  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.certificateLink :global(.material-symbols-outlined) {
+  font-size: 16px;
+}
+
+.certificateLink:hover {
+  background: #0d94881a;
+  border-color: var(--timeline-accent);
+  transform: translateY(-1px);
+}
+
+.certificateLink:focus-visible {
+  outline: 2px solid var(--timeline-accent);
+  outline-offset: 2px;
+}
+
+:global(.dark) .certificateLink {
+  color: #5eead4;
+}
+
 @media (max-width: 767px) {
   .entries { gap: 28px; }
   .track { left: 6px; top: 22px; }
@@ -307,6 +345,9 @@
   .expandButton[aria-expanded="true"] .expandChevron {
     transform: rotate(180deg);
   }
+  .cardFooter { margin-top: 12px; }
+  .certificateLink { padding: 5px 11px; font-size: 12px; }
+  .certificateLink :global(.material-symbols-outlined) { font-size: 14px; }
   .robotPosition { top: -40px; right: 4px; width: 54px; height: 54px; }
   .robotSpeech { right: 0; bottom: 56px; }
 }

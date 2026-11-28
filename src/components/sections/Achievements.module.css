@@ -183,6 +183,13 @@
   margin-bottom: 22px;
 }
 
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 20px;
+}
+
 .ctaLink {
   display: inline-flex;
   align-items: center;
@@ -191,6 +198,36 @@
   font-weight: 750;
   color: var(--ach-accent);
   transition: color 180ms ease;
+}
+
+.certLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--ach-border);
+  background: rgba(13, 148, 136, 0.08);
+  color: var(--ach-accent);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.certLink :global(.material-symbols-outlined) {
+  font-size: 15px;
+}
+
+.certLink:hover {
+  background: rgba(13, 148, 136, 0.14);
+  border-color: var(--ach-accent);
+  transform: translateY(-1px);
+}
+
+.certLink:focus-visible {
+  outline: 2px solid var(--ach-accent);
+  outline-offset: 3px;
 }
 
 .ctaArrow {
@@ -380,7 +417,7 @@
 /* ── Tablet & Desktop (>= 640px / >= 768px / >= 1024px) ── */
 @media (min-width: 640px) {
   .bottomTabs {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0;
   }
 
@@ -552,9 +589,13 @@
   .ctaLink {
     font-size: 13px;
   }
+  .certLink {
+    font-size: 12px;
+    padding: 5px 11px;
+  }
   .bottomTabs {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 10px;
   }
   .tabItem {
     padding: 12px 4px 4px;

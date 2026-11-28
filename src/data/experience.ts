@@ -6,6 +6,7 @@ export interface Experience {
   logoStyle?: "roundel" | "wordmark";
   period: string;
   description: string[];
+  certificateUrl?: string;
 }
 
 export const experiences: Experience[] = [
@@ -20,7 +21,8 @@ export const experiences: Experience[] = [
       "Built an evaluation pipeline comparing AWS-managed agent harness, OpenAI Agents SDK and LangChain Deep Agents.",
       "Integrated Agent Skills and used OpenTelemetry to analyze agent execution, tool interactions, latency and failures.",
       "Used AWS, Terraform and AWS CDK to provision infrastructure and create reproducible AI agent environments."
-    ]
+    ],
+    certificateUrl: "https://drive.google.com/file/d/1ZA5zcJEkaVZm9Hc_Nz8Vh1U7OmvTr6GB/view?usp=sharing"
   },
   {
     id: "research-intern-iit-bhu",
@@ -45,7 +47,8 @@ export const experiences: Experience[] = [
       "Implemented asynchronous background processing using Redis queues and APScheduler with observability for monitoring pipeline execution.",
       "Built an AI-powered infographic generator that creates visual posts for companies based on trending news topics.",
       "Contributed to backend APIs using Django and PostgreSQL."
-    ]
+    ],
+    certificateUrl: "https://drive.google.com/file/d/17UKEnCzEtBUqQiFrJjlAo0AQe0K7E7ZK/view?usp=sharing"
   },
   {
     id: "computer-team-mts-auv",

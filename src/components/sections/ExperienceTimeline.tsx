@@ -183,6 +183,21 @@ export default function ExperienceTimeline({ experiences }: { experiences: Exper
                     )}
                   </>
                 )}
+                {experience.certificateUrl && (
+                  <div className={styles.cardFooter}>
+                    <a
+                      href={experience.certificateUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.certificateLink}
+                      aria-label={`View certificate for ${experience.role} at ${experience.company}`}
+                    >
+                      <span className="material-symbols-outlined" aria-hidden="true">workspace_premium</span>
+                      <span>View Certificate</span>
+                      <span className="material-symbols-outlined" aria-hidden="true">open_in_new</span>
+                    </a>
+                  </div>
+                )}
               </article>
             </li>
           );

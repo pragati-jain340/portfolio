@@ -75,10 +75,26 @@ export default function Achievements() {
               <p className={styles.date}>{active.fullDate}</p>
               <p className={styles.description}>{active.description}</p>
 
-              <Link href={active.projectHref} className={styles.ctaLink}>
-                <span>Explore {active.projectLabel}</span>
-                <span className={styles.ctaArrow} aria-hidden="true">→</span>
-              </Link>
+              <div className={styles.ctaRow}>
+                {active.projectHref && active.projectLabel && (
+                  <Link href={active.projectHref} className={styles.ctaLink}>
+                    <span>Explore {active.projectLabel}</span>
+                    <span className={styles.ctaArrow} aria-hidden="true">→</span>
+                  </Link>
+                )}
+                {active.certificateUrl && (
+                  <a
+                    href={active.certificateUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.certLink}
+                  >
+                    <span className="material-symbols-outlined" aria-hidden="true">workspace_premium</span>
+                    <span>{active.certificateLabel ?? "View Certificate"}</span>
+                    <span className="material-symbols-outlined" aria-hidden="true">open_in_new</span>
+                  </a>
+                )}
+              </div>
             </div>
 
             {/* Right Browser-Framed Visual Mat */}
